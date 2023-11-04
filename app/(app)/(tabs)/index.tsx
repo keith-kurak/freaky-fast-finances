@@ -1,31 +1,53 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, FlatList, Pressable } from "react-native";
+import { Text, View, useTheme } from "../../../components/Themed";
+import { Link } from "expo-router";
 
-import EditScreenInfo from '../../../components/EditScreenInfo';
-import { Text, View } from '../../../components/Themed';
+const mockBudgets = ["Groceries", "Restaurants", "Household", "Fun", "Gas"];
 
-export default function TabOneScreen() {
+const Budget = ({ name }: { name: string }) => (
+  <Link href={`/budgets/${name}`} asChild>
+    <Pressable>
+      <View
+        style={{
+          flex: 1,
+          alignItems: "flex-start",
+          justifyContent: "center",
+          height: 50,
+          marginHorizontal: 20,
+        }}
+      >
+        <Text style={styles.title}>{name}</Text>
+      </View>
+    </Pressable>
+  </Link>
+);
+
+export default function BudgetsTab() {
+  const { text } = useTheme();
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
-    </View>
+    <FlatList
+      data={mockBudgets}
+      renderItem={({ item }) => <Budget name={item} />}
+      keyExtractor={(item) => item}
+      ItemSeparatorComponent={() => (
+        <View style={[styles.separator, { backgroundColor: text }]} />
+      )}
+    />
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   separator: {
-    marginVertical: 30,
     height: 1,
-    width: '80%',
+    marginHorizontal: 20,
   },
 });

@@ -9,7 +9,7 @@ export default function RootLayout() {
   // just manually toggling login for now
   // We could use context provider to do this for real
   // But firebase might make this easier, so why worry about it now?
-  const session = false;
+  const session = true;
 
   if (!session) {
     return <Redirect href="/sign-in" />;
