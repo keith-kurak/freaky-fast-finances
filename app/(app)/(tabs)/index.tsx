@@ -33,6 +33,7 @@ const Budget = ({ name, amount }: { name: string; amount: number }) => (
 export default function BudgetsTab() {
   const { text } = useTheme();
   const [budgets, setBudgets] = useState([]);
+
   useEffect(() => {
     const db = getFirestore();
     const budgetsCollection = query(
