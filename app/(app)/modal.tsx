@@ -34,4 +34,4 @@ const styles = StyleSheet.create({
   },
 });
 
-// just a comment, lol
+// just a comment, lol, again
