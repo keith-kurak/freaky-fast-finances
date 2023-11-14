@@ -33,3 +33,5 @@ const styles = StyleSheet.create({
     width: '80%',
   },
 });
+
+// just a comment, lol
