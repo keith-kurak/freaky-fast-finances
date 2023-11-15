@@ -1,11 +1,8 @@
 import { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { Platform, StyleSheet } from "react-native";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-} from "firebase/firestore";
+import { getFirestore, collection, setDoc, doc } from "firebase/firestore";
+import slugify from "slugify";
 import { useNavigation } from "expo-router";
 
 import { View, TextInput, RoundButton } from "../../components/Themed";
@@ -16,10 +13,17 @@ export default function ModalScreen() {
   const navigation = useNavigation();
 
   const onPressAddBudget = async () => {
-    await addDoc(collection(getFirestore(), "users/testuser/budgets"), {
-      name: budgetName,
-      amount: budgetAmount,
-    });
+    await setDoc(
+      doc(
+        getFirestore(),
+        "users/testuser/budgets",
+        slugify(budgetName, { lower: true })
+      ),
+      {
+        name: budgetName,
+        amount: budgetAmount,
+      }
+    );
     navigation.goBack();
   };
 
