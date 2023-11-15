@@ -10,8 +10,16 @@ import {
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
-const Budget = ({ name, amount }: { name: string; amount: number }) => (
-  <Link href={`/budgets/${name}`} asChild>
+const Budget = ({
+  id,
+  name,
+  amount,
+}: {
+  id: string;
+  name: string;
+  amount: number;
+}) => (
+  <Link href={`/budgets/${id}`} asChild>
     <Pressable>
       <View
         style={{
@@ -43,7 +51,7 @@ export default function BudgetsTab() {
     const unsubscribe = onSnapshot(budgetsCollection, (snapshot) => {
       const budgets: any = [];
       snapshot.forEach((s) => {
-        budgets.push(s.data());
+        budgets.push({ id: s.id, ...s.data() });
       });
       setBudgets(budgets);
     });
@@ -54,9 +62,9 @@ export default function BudgetsTab() {
     <FlatList
       data={budgets}
       renderItem={({ item }: { item: any }) => (
-        <Budget name={item.name} amount={item.amount} />
+        <Budget id={item.id} name={item.name} amount={item.amount} />
       )}
-      keyExtractor={(item) => item.name}
+      keyExtractor={(item) => item.id}
       ItemSeparatorComponent={() => (
         <View style={[styles.separator, { backgroundColor: text }]} />
       )}

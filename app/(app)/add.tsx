@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     marginVertical: 10,
-    width: 200,
+    width: '90%',
   },
   button: {
     marginTop: 10,
