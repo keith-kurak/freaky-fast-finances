@@ -9,6 +9,7 @@ import {
   TextInput as DefaultTextInput,
   View as DefaultView,
   Pressable,
+  ActivityIndicator,
 } from "react-native";
 
 import Colors from "../constants/Colors";
@@ -107,6 +108,65 @@ export function RoundButton(
       </View>
     </Pressable>
   );
+}
+
+export function InputItem({
+  label,
+  value,
+  onChangeText,
+  textInputProps,
+  containerStyle,
+}: {
+  label: string;
+  value: string;
+  onChangeText?: (text: string) => void;
+  textInputProps?: any;
+  containerStyle?: any;
+}) {
+  return (
+    <View
+      style={[
+        {
+          flexDirection: "row",
+          alignItems: "center",
+          marginHorizontal: 20,
+        },
+        containerStyle,
+      ]}
+    >
+      <Text style={{ width: 100 }}>{`${label}:`}</Text>
+      <TextInput
+        value={value}
+        placeholder={label}
+        onChangeText={onChangeText}
+        style={{ marginVertical: 10, flex: 1 }}
+        {...textInputProps}
+      />
+    </View>
+  );
+}
+
+export function LoadingShade({ isLoading }: { isLoading: boolean }) {
+  if (isLoading) {
+    return (
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0,0,0,0.5)",
+          zIndex: 1000,
+        }}
+      >
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+  return null;
 }
 
 export function useTheme() {

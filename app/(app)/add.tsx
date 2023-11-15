@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { Platform, StyleSheet } from "react-native";
-import { getFirestore, collection, setDoc, doc } from "firebase/firestore";
+import { getFirestore, setDoc, doc } from "firebase/firestore";
 import slugify from "slugify";
 import { useNavigation } from "expo-router";
 
-import { View, TextInput, RoundButton } from "../../components/Themed";
+import { View, RoundButton, InputItem } from "../../components/Themed";
 
 export default function ModalScreen() {
   const [budgetName, setBudgetName] = useState("");
@@ -29,17 +29,16 @@ export default function ModalScreen() {
 
   return (
     <View style={styles.container}>
-      <TextInput
+      <InputItem
         value={budgetName}
         onChangeText={setBudgetName}
-        placeholder="Budget name"
-        style={styles.textInput}
+        label="Budget name"
+        textInputProps={{ autoFocus: true }}
       />
-      <TextInput
+      <InputItem
         value={budgetAmount}
         onChangeText={setBudgetAmount}
-        placeholder="Starting amount"
-        style={styles.textInput}
+        label="Starting amount"
       />
       <RoundButton
         style={styles.button}
@@ -67,10 +66,6 @@ const styles = StyleSheet.create({
     marginVertical: 30,
     height: 1,
     width: "80%",
-  },
-  textInput: {
-    marginVertical: 10,
-    width: '90%',
   },
   button: {
     marginTop: 10,

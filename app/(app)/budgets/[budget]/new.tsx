@@ -2,56 +2,18 @@ import { StyleSheet, Platform } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useLocalSearchParams, Stack, useNavigation } from "expo-router";
 import {
-  TextInput,
   View,
   RoundButton,
-  Text,
+  InputItem,
 } from "../../../../components/Themed";
 import { useState } from "react";
 import {
   getFirestore,
   collection,
-  addDoc,
   serverTimestamp,
   runTransaction,
   doc,
 } from "firebase/firestore";
-
-function InputItem({
-  label,
-  value,
-  onChangeText,
-  textInputProps,
-  containerStyle,
-}: {
-  label: string;
-  value: string;
-  onChangeText?: (text: string) => void;
-  textInputProps?: any;
-  containerStyle?: any;
-}) {
-  return (
-    <View
-      style={[
-        {
-          flexDirection: "row",
-          alignItems: "center",
-          marginHorizontal: 20,
-        },
-        containerStyle,
-      ]}
-    >
-      <Text style={{ width: 100 }}>{`${label}:`}</Text>
-      <TextInput
-        value={value}
-        placeholder={label}
-        onChangeText={onChangeText}
-        style={[styles.textInput, { flex: 1 }]}
-        {...textInputProps}
-      />
-    </View>
-  );
-}
 
 export default function NewBudgetTransaction() {
   const { budget }: { budget: string } = useLocalSearchParams();
@@ -102,6 +64,7 @@ export default function NewBudgetTransaction() {
         value={description}
         onChangeText={setDescription}
         label="Description"
+        textInputProps={{ autoFocus: true }}
       />
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         <InputItem
@@ -145,9 +108,6 @@ const styles = StyleSheet.create({
     marginVertical: 30,
     height: 1,
     width: "80%",
-  },
-  textInput: {
-    marginVertical: 10,
   },
   button: {
     marginTop: 10,
