@@ -5,6 +5,24 @@ import { SplashScreen, Slot } from 'expo-router';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyA4SmaOEARCB6cfHhIP8ctmgQwDIFroDas",
+  authDomain: "freaky-fast-finances.firebaseapp.com",
+  projectId: "freaky-fast-finances",
+  storageBucket: "freaky-fast-finances.appspot.com",
+  messagingSenderId: "623887872428",
+  appId: "1:623887872428:web:6a31c1c1f7eb079db58a09"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,

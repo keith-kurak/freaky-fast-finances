@@ -1,22 +1,39 @@
-import { StyleSheet, FlatList, Pressable } from "react-native";
-import { Text, View, useTheme } from "../../../components/Themed";
+import { StyleSheet, Pressable } from "react-native";
+import { Text, View, FlatList, useTheme } from "../../../components/Themed";
 import { Link } from "expo-router";
+import {
+  getFirestore,
+  collection,
+  query,
+  onSnapshot,
+  orderBy,
+} from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { formatUSDollar } from '../../../util/format';
 
-const mockBudgets = ["Groceries", "Restaurants", "Household", "Fun", "Gas"];
-
-const Budget = ({ name }: { name: string }) => (
-  <Link href={`/budgets/${name}`} asChild>
+const Budget = ({
+  id,
+  name,
+  amount,
+}: {
+  id: string;
+  name: string;
+  amount: string;
+}) => (
+  <Link href={`/budgets/${id}`} asChild>
     <Pressable>
       <View
         style={{
           flex: 1,
-          alignItems: "flex-start",
-          justifyContent: "center",
-          height: 50,
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginVertical: 10,
           marginHorizontal: 20,
         }}
       >
         <Text style={styles.title}>{name}</Text>
+        <Text style={styles.title}>{amount}</Text>
       </View>
     </Pressable>
   </Link>
@@ -24,11 +41,32 @@ const Budget = ({ name }: { name: string }) => (
 
 export default function BudgetsTab() {
   const { text } = useTheme();
+  const [budgets, setBudgets] = useState([]);
+
+  useEffect(() => {
+    // load the budgets, pretty straightforward
+    const db = getFirestore();
+    const budgetsCollection = query(
+      collection(db, `users/testuser/budgets`),
+      orderBy("name")
+    );
+    const unsubscribe = onSnapshot(budgetsCollection, (snapshot) => {
+      const budgets: any = [];
+      snapshot.forEach((s) => {
+        budgets.push({ id: s.id, ...s.data() });
+      });
+      setBudgets(budgets);
+    });
+    return unsubscribe;
+  }, []);
+
   return (
     <FlatList
-      data={mockBudgets}
-      renderItem={({ item }) => <Budget name={item} />}
-      keyExtractor={(item) => item}
+      data={budgets}
+      renderItem={({ item }: { item: any }) => (
+        <Budget id={item.id} name={item.name} amount={formatUSDollar(item.amount)} />
+      )}
+      keyExtractor={(item) => item.id}
       ItemSeparatorComponent={() => (
         <View style={[styles.separator, { backgroundColor: text }]} />
       )}
