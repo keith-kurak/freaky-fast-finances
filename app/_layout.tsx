@@ -4,6 +4,9 @@ import { useFonts } from 'expo-font';
 import { SplashScreen, Slot } from 'expo-router';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
+// @ts-ignore
+import { initializeAuth, getReactNativePersistence } from "firebase/auth"
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
@@ -22,6 +25,10 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(ReactNativeAsyncStorage)
+});
 
 export {
   // Catch any errors thrown by the Layout component.

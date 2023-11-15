@@ -1,14 +1,18 @@
+import { useState } from 'react';
 import { StyleSheet } from 'react-native';
-
-import EditScreenInfo from '../../../components/EditScreenInfo';
-import { Text, View } from '../../../components/Themed';
+import { router } from 'expo-router';
+import { Text, View, RoundButton } from '../../../components/Themed';
+import { signOut, getAuth } from "firebase/auth"
 
 export default function TabTwoScreen() {
+  function logout() {
+    signOut(getAuth())
+    router.replace("/sign-in")
+  }
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab Two</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/two.tsx" />
+      <RoundButton onPress={logout} title="Logout" />
     </View>
   );
 }

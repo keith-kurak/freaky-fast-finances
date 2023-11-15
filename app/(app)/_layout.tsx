@@ -1,4 +1,5 @@
 import { Stack, Redirect } from "expo-router";
+import { getAuth } from "firebase/auth"
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -6,12 +7,8 @@ export const unstable_settings = {
 };
 
 export default function RootLayout() {
-  // just manually toggling login for now
-  // We could use context provider to do this for real
-  // But firebase might make this easier, so why worry about it now?
-  const session = true;
 
-  if (!session) {
+  if (!getAuth().currentUser) {
     return <Redirect href="/sign-in" />;
   }
 
