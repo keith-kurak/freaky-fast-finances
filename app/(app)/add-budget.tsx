@@ -13,6 +13,8 @@ export default function ModalScreen() {
   const navigation = useNavigation();
 
   const onPressAddBudget = async () => {
+    // simple set document
+    // but use a predefined ID based on slugified name so we have pretty URL's
     await setDoc(
       doc(
         getFirestore(),

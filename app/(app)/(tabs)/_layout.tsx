@@ -28,7 +28,7 @@ export default function TabLayout() {
           title: 'Budgets',
           tabBarIcon: ({ color }) => <TabBarIcon name="money" color={color} />,
           headerRight: () => (
-            <Link href="/add" asChild>
+            <Link href="/add-budget" asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome

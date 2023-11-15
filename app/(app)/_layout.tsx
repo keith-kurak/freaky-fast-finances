@@ -19,7 +19,7 @@ export default function RootLayout() {
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-      <Stack.Screen name="add" options={{ presentation: "modal", title: "Add New Budget" }} />
+      <Stack.Screen name="add-budget" options={{ presentation: "modal", title: "Add New Budget" }} />
     </Stack>
   );
 }

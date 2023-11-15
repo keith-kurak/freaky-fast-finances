@@ -7,6 +7,7 @@ import {
   Text as DefaultText,
   useColorScheme,
   TextInput as DefaultTextInput,
+  FlatList as DefaultFlatList,
   View as DefaultView,
   Pressable,
   ActivityIndicator,
@@ -22,6 +23,7 @@ type ThemeProps = {
 export type TextProps = ThemeProps & DefaultText["props"];
 export type ViewProps = ThemeProps & DefaultView["props"];
 export type TextInputProps = ThemeProps & DefaultTextInput["props"];
+export type FlatListProps = ThemeProps & DefaultFlatList["props"]
 
 export function useThemeColor(
   props: { light?: string; dark?: string },
@@ -77,6 +79,16 @@ export function View(props: ViewProps) {
   );
 
   return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
+}
+
+export function FlatList(props: FlatListProps) {
+  const { style, lightColor, darkColor, ...otherProps } = props;
+  const backgroundColor = useThemeColor(
+    { light: lightColor, dark: darkColor },
+    "background"
+  );
+
+  return <DefaultFlatList style={[{ backgroundColor }, style]} {...otherProps} />;
 }
 
 export function RoundButton(

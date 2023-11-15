@@ -1,5 +1,5 @@
-import { StyleSheet, FlatList, Pressable } from "react-native";
-import { Text, View, useTheme } from "../../../components/Themed";
+import { StyleSheet, Pressable } from "react-native";
+import { Text, View, FlatList, useTheme } from "../../../components/Themed";
 import { Link } from "expo-router";
 import {
   getFirestore,
@@ -9,6 +9,7 @@ import {
   orderBy,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import { formatUSDollar } from '../../../util/format';
 
 const Budget = ({
   id,
@@ -17,7 +18,7 @@ const Budget = ({
 }: {
   id: string;
   name: string;
-  amount: number;
+  amount: string;
 }) => (
   <Link href={`/budgets/${id}`} asChild>
     <Pressable>
@@ -27,7 +28,7 @@ const Budget = ({
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
-          height: 50,
+          marginVertical: 10,
           marginHorizontal: 20,
         }}
       >
@@ -43,6 +44,7 @@ export default function BudgetsTab() {
   const [budgets, setBudgets] = useState([]);
 
   useEffect(() => {
+    // load the budgets, pretty straightforward
     const db = getFirestore();
     const budgetsCollection = query(
       collection(db, `users/testuser/budgets`),
@@ -62,7 +64,7 @@ export default function BudgetsTab() {
     <FlatList
       data={budgets}
       renderItem={({ item }: { item: any }) => (
-        <Budget id={item.id} name={item.name} amount={item.amount} />
+        <Budget id={item.id} name={item.name} amount={formatUSDollar(item.amount)} />
       )}
       keyExtractor={(item) => item.id}
       ItemSeparatorComponent={() => (

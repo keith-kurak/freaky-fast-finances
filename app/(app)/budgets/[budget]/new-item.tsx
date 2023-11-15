@@ -25,14 +25,19 @@ export default function NewBudgetTransaction() {
   const navigation = useNavigation();
 
   const onPressAddBudget = async () => {
+    // transaction so we can update total on budget and add the line item at the same time
+    // summing all the lines could be an option, but then it's more difficult to get the
+    // nice total on the budgets screen.
     const db = getFirestore();
     await runTransaction(getFirestore(), async (transaction) => {
       const budgetRef = doc(db, `users/testuser/budgets/${budget}`);
       const budgetDoc = await transaction.get(budgetRef);
       if (budgetDoc.exists()) {
+        // update budget total
         const amountToAdd =  sign === "-" ? -1 * Number(amount) : Number(amount);
         const newAmount = Number(budgetDoc.data().amount) + amountToAdd;
         transaction.update(budgetRef, { amount: newAmount });
+        // add new budget line
         const newItemRef =   doc(collection(db, `users/testuser/budgets/${budget}/items`));
         transaction.set(newItemRef, {
           description,

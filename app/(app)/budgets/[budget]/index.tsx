@@ -1,7 +1,7 @@
-import { StyleSheet, FlatList, Pressable, useColorScheme } from "react-native";
+import { StyleSheet, Pressable, useColorScheme } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useLocalSearchParams, Stack, Link } from "expo-router";
-import { Text, View, useTheme } from "../../../../components/Themed";
+import { Text, View, FlatList, useTheme } from "../../../../components/Themed";
 import {
   getFirestore,
   collection,
@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import Colors from "../../../../constants/Colors";
+import { formatUSDollar } from '../../../../util/format'
 
 function BudgetItem({
   item,
@@ -44,7 +45,7 @@ function BudgetItem({
         <Text style={styles.title}>{description}</Text>
         <Text
           style={[styles.title, { color: amount >= 0 ? "green" : "red" }]}
-        >{`${amount >= 0 ? "+" : "-"}$${Math.abs(amount)}`}</Text>
+        >{formatUSDollar(amount)}</Text>
       </View>
     </View>
   );
@@ -60,10 +61,14 @@ export default function BudgetItemsList() {
 
   useEffect(() => {
     const db = getFirestore();
+    // load the running total and name from the budget
     const budgetDoc = doc(db, `users/testuser/budgets/${budget}`);
     const unsubscribeFromDoc = onSnapshot(budgetDoc, (snapshot: any) => {
       setBudgetInfo(snapshot.data());
     });
+    // load the budget lines
+    // might be a case for using an array on the budget document so we can load it all at once.
+    // Probably depends on how long the list would get.
     const budgetItems = query(collection(budgetDoc, "items"), orderBy("date"));
     const unsubscribeFromItems = onSnapshot(budgetItems, (snapshot) => {
       const items: any = [];
@@ -84,7 +89,7 @@ export default function BudgetItemsList() {
         options={{
           title: budgetInfo.name,
           headerRight: () => (
-            <Link href={`/budgets/${budget}/new`} asChild>
+            <Link href={`/budgets/${budget}/new-item`} asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome
@@ -115,7 +120,7 @@ export default function BudgetItemsList() {
             }}
           >
             <Text style={styles.subheading}>Balance</Text>
-            <Text style={styles.amount}>${budgetInfo.amount}</Text>
+            <Text style={styles.amount}>{formatUSDollar(budgetInfo.amount)}</Text>
           </View>
         }
       />
