@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { StyleSheet, Alert } from 'react-native';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
-import { View, RoundButton, InputItem } from '../components/Themed';
+import { View, RoundButton, InputItem, LoadingShade } from '../components/Themed';
 import { Redirect } from 'expo-router';
 
 export default function SignInScreen() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [session, setSession] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   async function onPressLogin() {
+    setIsLoading(true)
     const auth = getAuth()
     try {
       await signInWithEmailAndPassword(auth, email, password)
@@ -17,6 +19,8 @@ export default function SignInScreen() {
     } catch (e) {
       console.error(e)
       Alert.alert("Error logging in")
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -39,6 +43,7 @@ export default function SignInScreen() {
         textInputProps={{ secureTextEntry: true }}
       />
       <RoundButton style={styles.button} onPress={onPressLogin} title="Login" />
+      <LoadingShade isLoading={isLoading} />
     </View>
   );
 }
