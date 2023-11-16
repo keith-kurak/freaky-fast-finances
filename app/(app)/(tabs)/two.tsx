@@ -1,13 +1,13 @@
-import { useState } from 'react';
 import { StyleSheet } from 'react-native';
-import { router } from 'expo-router';
-import { Text, View, RoundButton } from '../../../components/Themed';
+import { View, RoundButton } from '../../../components/Themed';
 import { signOut, getAuth } from "firebase/auth"
 
 export default function TabTwoScreen() {
   function logout() {
+    // the _layout listener will pick this up and handle the redirect
     signOut(getAuth())
-    router.replace("/sign-in")
+    // this technically works, as well
+    //router.replace("/sign-in")
   }
 
   return (
