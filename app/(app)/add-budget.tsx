@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { Platform, StyleSheet } from "react-native";
+import { Platform, StyleSheet, Alert } from "react-native";
 import { getFirestore, setDoc, doc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import slugify from "slugify";
 import { useNavigation } from "expo-router";
 
-import { View, RoundButton, InputItem } from "../../components/Themed";
+import { View, RoundButton, InputItem, LoadingShade } from "../../components/Themed";
 
 export default function ModalScreen() {
+  const [loading, setLoading] = useState(false);
   const [budgetName, setBudgetName] = useState("");
   const [budgetAmount, setBudgetAmount] = useState("0");
   const navigation = useNavigation();
@@ -15,18 +17,25 @@ export default function ModalScreen() {
   const onPressAddBudget = async () => {
     // simple set document
     // but use a predefined ID based on slugified name so we have pretty URL's
-    await setDoc(
-      doc(
-        getFirestore(),
-        "users/testuser/budgets",
-        slugify(budgetName, { lower: true })
-      ),
-      {
-        name: budgetName,
-        amount: budgetAmount,
-      }
-    );
-    navigation.goBack();
+    try {
+      setLoading(true);
+      await setDoc(
+        doc(
+          getFirestore(),
+          `users/${getAuth().currentUser?.uid}/budgets`,
+          slugify(budgetName, { lower: true })
+        ),
+        {
+          name: budgetName,
+          amount: budgetAmount,
+        }
+      );
+      navigation.goBack();
+    } catch (error) {
+      Alert.alert("Error adding budget");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -47,6 +56,7 @@ export default function ModalScreen() {
         onPress={onPressAddBudget}
         title="Add Budget"
       />
+      <LoadingShade isLoading={loading} />
       {/* Use a light status bar on iOS to account for the black space above the modal */}
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
     </View>

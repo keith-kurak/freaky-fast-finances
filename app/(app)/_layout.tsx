@@ -1,4 +1,8 @@
-import { Stack, Redirect } from "expo-router";
+import { useState } from "react";
+import { Stack, router } from "expo-router";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useEffect } from "react";
+import { View, LoadingShade } from "../../components/Themed";
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -6,20 +10,38 @@ export const unstable_settings = {
 };
 
 export default function RootLayout() {
-  // just manually toggling login for now
-  // We could use context provider to do this for real
-  // But firebase might make this easier, so why worry about it now?
-  const session = true;
+  const [loading, setLoading] = useState(true);
 
-  if (!session) {
-    return <Redirect href="/sign-in" />;
+  // useEffect executes after first render
+  // onAuthStateChanged executes sometime after useEffect
+  // So loading is an intermediate state until we can determine if we're logged in
+  useEffect(() => {
+    // this will listen for auth changes whenever the user is logged in
+    // it will handle sign out but also a sudden sesssion expiration
+    onAuthStateChanged(getAuth(), (user) => {
+      setLoading(false);
+      if (!user) {
+        router.replace("/sign-in");
+      }
+    });
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1 }}>
+        <LoadingShade isLoading={true} />
+      </View>
+    );
   }
 
   return (
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-      <Stack.Screen name="add-budget" options={{ presentation: "modal", title: "Add New Budget" }} />
+      <Stack.Screen
+        name="add-budget"
+        options={{ presentation: "modal", title: "Add New Budget" }}
+      />
     </Stack>
   );
 }

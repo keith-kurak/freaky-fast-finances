@@ -12,6 +12,7 @@ import {
   getDoc,
   Timestamp,
 } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import { useEffect, useState } from "react";
 import Colors from "../../../../constants/Colors";
 import { formatUSDollar } from '../../../../util/format'
@@ -62,7 +63,7 @@ export default function BudgetItemsList() {
   useEffect(() => {
     const db = getFirestore();
     // load the running total and name from the budget
-    const budgetDoc = doc(db, `users/testuser/budgets/${budget}`);
+    const budgetDoc = doc(db, `users/${getAuth().currentUser?.uid}/budgets/${budget}`);
     const unsubscribeFromDoc = onSnapshot(budgetDoc, (snapshot: any) => {
       setBudgetInfo(snapshot.data());
     });
