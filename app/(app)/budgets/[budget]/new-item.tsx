@@ -1,11 +1,7 @@
-import { StyleSheet, Platform } from "react-native";
+import { StyleSheet, Platform, Alert } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useLocalSearchParams, Stack, useNavigation } from "expo-router";
-import {
-  View,
-  RoundButton,
-  InputItem,
-} from "../../../../components/Themed";
+import { View, RoundButton, InputItem, LoadingShade } from "../../../../components/Themed";
 import { useState } from "react";
 import {
   getFirestore,
@@ -19,6 +15,7 @@ import { getAuth } from "firebase/auth";
 export default function NewBudgetTransaction() {
   const { budget }: { budget: string } = useLocalSearchParams();
 
+  const [loading, setLoading] = useState(false);
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("0");
   const [sign, setSign] = useState("-");
@@ -29,25 +26,41 @@ export default function NewBudgetTransaction() {
     // transaction so we can update total on budget and add the line item at the same time
     // summing all the lines could be an option, but then it's more difficult to get the
     // nice total on the budgets screen.
-    const db = getFirestore();
-    await runTransaction(getFirestore(), async (transaction) => {
-      const budgetRef = doc(db, `users/${getAuth().currentUser?.uid}/budgets/${budget}`);
-      const budgetDoc = await transaction.get(budgetRef);
-      if (budgetDoc.exists()) {
-        // update budget total
-        const amountToAdd =  sign === "-" ? -1 * Number(amount) : Number(amount);
-        const newAmount = Number(budgetDoc.data().amount) + amountToAdd;
-        transaction.update(budgetRef, { amount: newAmount });
-        // add new budget line
-        const newItemRef =   doc(collection(db, `users/${getAuth().currentUser?.uid}/budgets/${budget}/items`));
-        transaction.set(newItemRef, {
-          description,
-          amount: amountToAdd,
-          date: serverTimestamp(),
-        });
-      }
-    });
-    navigation.goBack();
+    try {
+      setLoading(true);
+      const db = getFirestore();
+      await runTransaction(getFirestore(), async (transaction) => {
+        const budgetRef = doc(
+          db,
+          `users/${getAuth().currentUser?.uid}/budgets/${budget}`
+        );
+        const budgetDoc = await transaction.get(budgetRef);
+        if (budgetDoc.exists()) {
+          // update budget total
+          const amountToAdd =
+            sign === "-" ? -1 * Number(amount) : Number(amount);
+          const newAmount = Number(budgetDoc.data().amount) + amountToAdd;
+          transaction.update(budgetRef, { amount: newAmount });
+          // add new budget line
+          const newItemRef = doc(
+            collection(
+              db,
+              `users/${getAuth().currentUser?.uid}/budgets/${budget}/items`
+            )
+          );
+          transaction.set(newItemRef, {
+            description,
+            amount: amountToAdd,
+            date: serverTimestamp(),
+          });
+        }
+      });
+      navigation.goBack();
+    } catch (error) {
+      Alert.alert("Error adding item!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onToggleExpenseOrIncome = () => {
@@ -93,6 +106,7 @@ export default function NewBudgetTransaction() {
         onPress={onPressAddBudget}
         title="Add Transaction"
       />
+      <LoadingShade isLoading={loading} />
       {/* Use a light status bar on iOS to account for the black space above the modal */}
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
     </View>
