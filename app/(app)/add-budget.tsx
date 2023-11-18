@@ -2,6 +2,7 @@ import { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { Platform, StyleSheet } from "react-native";
 import { getFirestore, setDoc, doc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import slugify from "slugify";
 import { useNavigation } from "expo-router";
 
@@ -18,7 +19,7 @@ export default function ModalScreen() {
     await setDoc(
       doc(
         getFirestore(),
-        "users/testuser/budgets",
+        `users/${getAuth().currentUser?.uid}/budgets`,
         slugify(budgetName, { lower: true })
       ),
       {

@@ -8,6 +8,7 @@ import {
   onSnapshot,
   orderBy,
 } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { formatUSDollar } from '../../../util/format';
 
@@ -47,7 +48,7 @@ export default function BudgetsTab() {
     // load the budgets, pretty straightforward
     const db = getFirestore();
     const budgetsCollection = query(
-      collection(db, `users/testuser/budgets`),
+      collection(db, `users/${getAuth().currentUser?.uid}/budgets`),
       orderBy("name")
     );
     const unsubscribe = onSnapshot(budgetsCollection, (snapshot) => {

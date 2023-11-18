@@ -14,6 +14,7 @@ import {
   runTransaction,
   doc,
 } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 export default function NewBudgetTransaction() {
   const { budget }: { budget: string } = useLocalSearchParams();
@@ -30,7 +31,7 @@ export default function NewBudgetTransaction() {
     // nice total on the budgets screen.
     const db = getFirestore();
     await runTransaction(getFirestore(), async (transaction) => {
-      const budgetRef = doc(db, `users/testuser/budgets/${budget}`);
+      const budgetRef = doc(db, `users/${getAuth().currentUser?.uid}/budgets/${budget}`);
       const budgetDoc = await transaction.get(budgetRef);
       if (budgetDoc.exists()) {
         // update budget total
@@ -38,7 +39,7 @@ export default function NewBudgetTransaction() {
         const newAmount = Number(budgetDoc.data().amount) + amountToAdd;
         transaction.update(budgetRef, { amount: newAmount });
         // add new budget line
-        const newItemRef =   doc(collection(db, `users/testuser/budgets/${budget}/items`));
+        const newItemRef =   doc(collection(db, `users/${getAuth().currentUser?.uid}/budgets/${budget}/items`));
         transaction.set(newItemRef, {
           description,
           amount: amountToAdd,
