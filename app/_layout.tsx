@@ -3,9 +3,9 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { SplashScreen, Slot } from 'expo-router';
 import { useEffect } from 'react';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, Platform } from 'react-native';
 // @ts-ignore
-import { initializeAuth, getReactNativePersistence } from "firebase/auth"
+import { initializeAuth, getReactNativePersistence, browserLocalPersistence } from "firebase/auth"
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
 // Import the functions you need from the SDKs you need
@@ -27,7 +27,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(ReactNativeAsyncStorage)
+  persistence: Platform.OS === 'web' ? browserLocalPersistence : getReactNativePersistence(ReactNativeAsyncStorage)
 });
 
 export {
