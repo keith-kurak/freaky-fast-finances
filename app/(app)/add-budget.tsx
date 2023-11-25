@@ -1,42 +1,24 @@
 import { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { Platform, StyleSheet, Alert } from "react-native";
-import { getFirestore, setDoc, doc } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
-import slugify from "slugify";
 import { useNavigation } from "expo-router";
+import { useAddBudget } from "../../data";
 
 import { View, RoundButton, InputItem, LoadingShade } from "../../components/Themed";
 
 export default function ModalScreen() {
-  const [loading, setLoading] = useState(false);
   const [budgetName, setBudgetName] = useState("");
   const [budgetAmount, setBudgetAmount] = useState("0");
   const navigation = useNavigation();
 
-  const onPressAddBudget = async () => {
-    // simple set document
-    // but use a predefined ID based on slugified name so we have pretty URL's
-    try {
-      setLoading(true);
-      await setDoc(
-        doc(
-          getFirestore(),
-          `users/${getAuth().currentUser?.uid}/budgets`,
-          slugify(budgetName, { lower: true })
-        ),
-        {
-          name: budgetName,
-          amount: budgetAmount,
-        }
-      );
+  const { onAddBudget, loading } = useAddBudget({
+    budgetName, budgetAmount, onAddBudgetComplete: () => {
       navigation.goBack();
-    } catch (error) {
-      Alert.alert("Error adding budget");
-    } finally {
-      setLoading(false);
+    },
+    onAddBudgetFailed: (error) => {
+      Alert.alert(error.message)
     }
-  };
+  });
 
   return (
     <View style={styles.container}>
@@ -53,7 +35,7 @@ export default function ModalScreen() {
       />
       <RoundButton
         style={styles.button}
-        onPress={onPressAddBudget}
+        onPress={onAddBudget}
         title="Add Budget"
       />
       <LoadingShade isLoading={loading} />

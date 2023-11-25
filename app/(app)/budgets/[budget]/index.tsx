@@ -3,19 +3,11 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useLocalSearchParams, Stack, Link } from "expo-router";
 import { Text, View, FlatList, useTheme } from "../../../../components/Themed";
 import {
-  getFirestore,
-  collection,
-  query,
-  onSnapshot,
-  orderBy,
-  doc,
-  getDoc,
   Timestamp,
 } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
-import { useEffect, useState } from "react";
 import Colors from "../../../../constants/Colors";
 import { formatUSDollar } from '../../../../util/format'
+import { useBudget } from "../../../../data";
 
 function BudgetItem({
   item,
@@ -55,34 +47,10 @@ function BudgetItem({
 export default function BudgetItemsList() {
   const { budget }: { budget: string } = useLocalSearchParams();
   const { text } = useTheme();
-  const [budgetItems, setBudgetItems] = useState([]);
-  const [budgetInfo, setBudgetInfo] = useState({ amount: 0, name: budget });
 
   const colorScheme = useColorScheme();
 
-  useEffect(() => {
-    const db = getFirestore();
-    // load the running total and name from the budget
-    const budgetDoc = doc(db, `users/${getAuth().currentUser?.uid}/budgets/${budget}`);
-    const unsubscribeFromDoc = onSnapshot(budgetDoc, (snapshot: any) => {
-      setBudgetInfo(snapshot.data());
-    });
-    // load the budget lines
-    // might be a case for using an array on the budget document so we can load it all at once.
-    // Probably depends on how long the list would get.
-    const budgetItems = query(collection(budgetDoc, "items"), orderBy("date"));
-    const unsubscribeFromItems = onSnapshot(budgetItems, (snapshot) => {
-      const items: any = [];
-      snapshot.forEach((s) => {
-        items.push({ id: s.id, ...s.data() });
-      });
-      setBudgetItems(items);
-    });
-    return () => {
-      unsubscribeFromDoc();
-      unsubscribeFromItems();
-    };
-  }, []);
+  const { budgetItems, budgetInfo } = useBudget(budget);
 
   return (
     <View style={{ flex: 1 }}>
