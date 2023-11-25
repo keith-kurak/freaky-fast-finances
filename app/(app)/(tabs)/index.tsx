@@ -1,15 +1,7 @@
 import { StyleSheet, Pressable } from "react-native";
 import { Text, View, FlatList, useTheme } from "../../../components/Themed";
 import { Link } from "expo-router";
-import {
-  getFirestore,
-  collection,
-  query,
-  onSnapshot,
-  orderBy,
-} from "firebase/firestore";
-import { getAuth } from "firebase/auth";
-import { useEffect, useState } from "react";
+import { useBudgets } from "../../../data";
 import { formatUSDollar } from '../../../util/format';
 
 const Budget = ({
@@ -42,24 +34,8 @@ const Budget = ({
 
 export default function BudgetsTab() {
   const { text } = useTheme();
-  const [budgets, setBudgets] = useState([]);
 
-  useEffect(() => {
-    // load the budgets, pretty straightforward
-    const db = getFirestore();
-    const budgetsCollection = query(
-      collection(db, `users/${getAuth().currentUser?.uid}/budgets`),
-      orderBy("name")
-    );
-    const unsubscribe = onSnapshot(budgetsCollection, (snapshot) => {
-      const budgets: any = [];
-      snapshot.forEach((s) => {
-        budgets.push({ id: s.id, ...s.data() });
-      });
-      setBudgets(budgets);
-    });
-    return unsubscribe;
-  }, []);
+  const { budgets } = useBudgets();
 
   return (
     <FlatList

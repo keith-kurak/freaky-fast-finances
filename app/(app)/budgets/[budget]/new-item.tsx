@@ -11,57 +11,25 @@ import {
   doc,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { useAddBudgetItem } from '../../../../data';
 
 export default function NewBudgetTransaction() {
   const { budget }: { budget: string } = useLocalSearchParams();
 
-  const [loading, setLoading] = useState(false);
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("0");
   const [sign, setSign] = useState("-");
 
   const navigation = useNavigation();
 
-  const onPressAddBudget = async () => {
-    // transaction so we can update total on budget and add the line item at the same time
-    // summing all the lines could be an option, but then it's more difficult to get the
-    // nice total on the budgets screen.
-    try {
-      setLoading(true);
-      const db = getFirestore();
-      await runTransaction(getFirestore(), async (transaction) => {
-        const budgetRef = doc(
-          db,
-          `users/${getAuth().currentUser?.uid}/budgets/${budget}`
-        );
-        const budgetDoc = await transaction.get(budgetRef);
-        if (budgetDoc.exists()) {
-          // update budget total
-          const amountToAdd =
-            sign === "-" ? -1 * Number(amount) : Number(amount);
-          const newAmount = Number(budgetDoc.data().amount) + amountToAdd;
-          transaction.update(budgetRef, { amount: newAmount });
-          // add new budget line
-          const newItemRef = doc(
-            collection(
-              db,
-              `users/${getAuth().currentUser?.uid}/budgets/${budget}/items`
-            )
-          );
-          transaction.set(newItemRef, {
-            description,
-            amount: amountToAdd,
-            date: serverTimestamp(),
-          });
-        }
-      });
+  const { onAddBudgetItem, loading } = useAddBudgetItem({
+    budget, description, amount, sign, onAddBudgetItemComplete: () => {
       navigation.goBack();
-    } catch (error) {
-      Alert.alert("Error adding item!");
-    } finally {
-      setLoading(false);
+    },
+    onAddBudgetItemFailed: (error) => {
+      Alert.alert(error.message)
     }
-  };
+  });
 
   const onToggleExpenseOrIncome = () => {
     if (sign === "-") {
@@ -103,7 +71,7 @@ export default function NewBudgetTransaction() {
       </View>
       <RoundButton
         style={styles.button}
-        onPress={onPressAddBudget}
+        onPress={onAddBudgetItem}
         title="Add Transaction"
       />
       <LoadingShade isLoading={loading} />
