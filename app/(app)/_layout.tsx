@@ -2,7 +2,9 @@ import { useState } from "react";
 import { Stack, router } from "expo-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useEffect } from "react";
+import { setUsername } from '../../data';
 import { View, LoadingShade } from "../../components/Themed";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -18,12 +20,21 @@ export default function RootLayout() {
   useEffect(() => {
     // this will listen for auth changes whenever the user is logged in
     // it will handle sign out but also a sudden sesssion expiration
-    onAuthStateChanged(getAuth(), (user) => {
+    /*onAuthStateChanged(getAuth(), (user) => {
       setLoading(false);
       if (!user) {
         router.replace("/sign-in");
       }
-    });
+    });*/
+    (async function doAsync() {
+      const username = await AsyncStorage.getItem("username");
+      setLoading(false);
+      if (!username) {
+        router.replace("/sign-in");
+      } else {
+        setUsername(username);
+      }
+    })();
   }, []);
 
   if (loading) {

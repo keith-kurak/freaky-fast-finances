@@ -13,6 +13,12 @@ import {
 import { getAuth } from "firebase/auth";
 import slugify from "slugify";
 
+let username;
+
+export function setUsername(myUsername: string) {
+  username = myUsername;
+}
+
 export function useBudgets() {
   const [budgets, setBudgets] = useState([]);
 
@@ -20,7 +26,7 @@ export function useBudgets() {
     // load the budgets, pretty straightforward
     const db = getFirestore();
     const budgetsCollection = query(
-      collection(db, `users/${getAuth().currentUser?.uid}/budgets`),
+      collection(db, `users/${username!}/budgets`),
       orderBy("name")
     );
     const unsubscribe = onSnapshot(budgetsCollection, (snapshot) => {
@@ -45,7 +51,7 @@ export function useBudget(budget: string) {
     // load the running total and name from the budget
     const budgetDoc = doc(
       db,
-      `users/${getAuth().currentUser?.uid}/budgets/${budget}`
+      `users/${username!}/budgets/${budget}`
     );
     const unsubscribeFromDoc = onSnapshot(budgetDoc, (snapshot: any) => {
       setBudgetInfo(snapshot.data());
@@ -92,7 +98,7 @@ export function useAddBudget({
         await setDoc(
           doc(
             getFirestore(),
-            `users/${getAuth().currentUser?.uid}/budgets`,
+            `users/${username!}/budgets`,
             slugify(budgetName, { lower: true })
           ),
           {
@@ -143,7 +149,7 @@ export function useAddBudgetItem({
         await runTransaction(getFirestore(), async (transaction) => {
           const budgetRef = doc(
             db,
-            `users/${getAuth().currentUser?.uid}/budgets/${budget}`
+            `users/${username!}/budgets/${budget}`
           );
           const budgetDoc = await transaction.get(budgetRef);
           if (budgetDoc.exists()) {
@@ -156,7 +162,7 @@ export function useAddBudgetItem({
             const newItemRef = doc(
               collection(
                 db,
-                `users/${getAuth().currentUser?.uid}/budgets/${budget}/items`
+                `users/${username!}/budgets/${budget}/items`
               )
             );
             transaction.set(newItemRef, {
