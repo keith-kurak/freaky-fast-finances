@@ -29,3 +29,8 @@ Check out the [closed pull requests](https://github.com/keith-kurak/freaky-fast-
 ## Slides
 [presentation slides](https://docs.google.com/presentation/d/1vX8D2UF9OplqfrBoWoSSjZLMEnB9gMms_hJwExuTp5o/edit?usp=sharing)
 
+## Find Keith
+[Bird app](https://twitter.com/llamaluvr)
+[LinkedIn](https://www.linkedin.com/in/keith-kurak/)
+[Discord](https://chat.expo.dev)
+
