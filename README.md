@@ -11,9 +11,9 @@ The final project uses Firebase Firestore and email/ password authentication.
 6. Setup authentication with the "email / password" option
 7. Create a test account
 
-Check out my previously Freaky Fast Full-Stack workshop for detailed instructions with pictures for [setting up Firestore](https://github.com/keith-kurak/ferni-chat-2023/blob/main/exercises/03-read-write-firebase.md) and [setting up authentication](https://github.com/keith-kurak/ferni-chat-2023/blob/main/exercises/04-firebase-auth.md).
+Check out my previous Freaky Fast Full-Stack workshop for detailed instructions with pictures for [setting up Firestore](https://github.com/keith-kurak/ferni-chat-2023/blob/main/exercises/03-read-write-firebase.md) and [setting up authentication](https://github.com/keith-kurak/ferni-chat-2023/blob/main/exercises/04-firebase-auth.md).
 
-## Setting up Firebase / EAS (for deploy)
+## Setting up Firebase Hosting / EAS (for build / deploy)
 I'll get back to this, but for now you can follow my [workshop instructions](https://github.com/keith-kurak/ferni-chat-2023/blob/main/exercises/coda-deploy.md), they're practically the same. 
 
 ## How to run this
