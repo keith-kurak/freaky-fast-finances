@@ -1,6 +1,10 @@
 # Freaky Fast Finances
 Presentation app for "Freaky Fast Full Stack with Firebase and Expo Router" at Michigan DevFest 2023.
 
+## Download Expo Go
+- [iOS](https://apps.apple.com/us/app/expo-go/id982107779)
+- [Android](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US&gl=US)
+
 ## Setting up Firebase (for running locally)
 The final project uses Firebase Firestore and email/ password authentication.
 1. Go to the [Firebase Console](https://console.firebase.google.com)
